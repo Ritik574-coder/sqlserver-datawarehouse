@@ -43,7 +43,7 @@ The project follows the **Medallion Architecture** — a layered data design pat
 ---
 ## Visual_architeture
 
-![Alt text](/home/ritik/data-ecosystem-platform/Data Warehouse/BusinessDW/Docs/data_architecture.png)
+![Alt text](https://github.com/Ritik574-coder/sqlserver-datawarehouse/blob/main/Docs/data_architecture.png)
 
 
 The data warehouse is structured as a **SQL Server** database with three schema layers, each serving a distinct purpose in the data pipeline.
@@ -142,7 +142,7 @@ The Bronze layer preserves the exact source data to enable full auditability and
 
 ## 🔀 Data Flow & Lineage
 
-![Alt text](/home/ritik/data-ecosystem-platform/Data Warehouse/BusinessDW/Docs/data_architecture.png)
+![Alt text](https://github.com/Ritik574-coder/sqlserver-datawarehouse/blob/main/Docs/Data_Flow.png)
 
 Each Bronze table maps 1:1 to a Silver table. Silver tables are then integrated and aggregated into Gold views using business logic and dimensional modeling.
 
@@ -150,7 +150,7 @@ Each Bronze table maps 1:1 to a Silver table. Silver tables are then integrated 
 
 ## ⚙️ ETL Workflow
 
-<embed src="path/to/document.pdf" width="800" height="600" type="application/pdf">
+<embed src="https://github.com/Ritik574-coder/sqlserver-datawarehouse/blob/main/Docs/data_layers.pdf" width="800" height="600" type="application/pdf">
 
 Each layer follows a consistent 4-phase development workflow:
 
