@@ -50,7 +50,7 @@ BEGIN
 
         PRINT '>> Loading data into : bronze.crm_cust_info' ;
         BULK INSERT bronze.crm_cust_info
-        FROM '/var/opt/mssql/data/Dataset/CRM/cust_info.csv'
+        FROM '/data/Dataset/CRM/cust_info.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
@@ -70,7 +70,7 @@ BEGIN
 
         PRINT '>> Inserting data into : bronze.crm_prd_info' ;
         BULK INSERT bronze.crm_prd_info
-        FROM '/var/opt/mssql/data/Dataset/CRM/prd_info.csv'
+        FROM '/data/Dataset/CRM/prd_info.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
@@ -90,7 +90,7 @@ BEGIN
 
         PRINT 'Inserting data into : bronze.crm_sales_details' ;
         BULK INSERT bronze.crm_sales_details
-        FROM '/var/opt/mssql/data/Dataset/CRM/sales_details.csv'
+        FROM '/data/Dataset/CRM/sales_details.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
@@ -114,7 +114,7 @@ BEGIN
 
         PRINT 'Inserting data into : bronze.erp_cust_az12' ;
         BULK INSERT bronze.erp_cust_az12
-        FROM '/var/opt/mssql/data/Dataset/ERP/CUST_AZ12.csv'
+        FROM '/data/Dataset/ERP/CUST_AZ12.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
@@ -134,7 +134,7 @@ BEGIN
 
         PRINT 'Inserting data into : bronze.erp_loc_a101' ;
         BULK INSERT bronze.erp_loc_a101
-        FROM '/var/opt/mssql/data/Dataset/ERP/LOC_A101.csv'
+        FROM '/data/Dataset/ERP/LOC_A101.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
@@ -154,7 +154,7 @@ BEGIN
 
         PRINT 'Inserting data into : bronze.erp_px_cat_g1v2' ;
         BULK INSERT bronze.erp_px_cat_g1v2
-        FROM '/var/opt/mssql/data/Dataset/ERP/PX_CAT_G1V2.csv'
+        FROM '/data/Dataset/ERP/PX_CAT_G1V2.csv'
         WITH(
             FIRSTROW = 2 ,
             FIELDTERMINATOR = ',' ,
