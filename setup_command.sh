@@ -207,6 +207,11 @@ git add .
 # commit changes
 git commit -m "Implement bronze layer ETL process"
 
+# commit with co-author
+git commit -m "Implement bronze layer ETL process
+
+Co-authored-by: Contributor Name <contributor@example.com>"
+
 # push changes to github
 git push origin warehouse_branch
 
