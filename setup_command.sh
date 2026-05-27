@@ -174,3 +174,41 @@ cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
 
 # Product Category
 /data/Dataset/ERP/PX_CAT_G1V2.csv
+
+################################################################################
+########################### ADDING GIT COMMAND  ################################
+################################################################################  
+
+# clone repository from github
+git clone https://github.com/Ritik574-coder/sqlserver-datawarehouse.git
+
+# move into project directory
+cd sqlserver-datawarehouse
+
+# authenticate github account
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+
+# create new branch
+git branch warehouse_branch
+
+# switch to branch
+git switch warehouse_branch
+
+# add single file
+git add README.md
+
+# check repository status
+git status
+
+# add all files
+git add .
+
+# commit changes
+git commit -m "Implement bronze layer ETL process"
+
+# push changes to github
+git push origin warehouse_branch
+
+# view commit history
+git log
