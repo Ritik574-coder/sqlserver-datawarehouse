@@ -51,7 +51,7 @@ The data warehouse is structured as a **SQL Server** database with three schema 
 ---
 ## 🧩 Entity Relationship Diagram (ERD)
 
-[relationship diagram image]
+![relationship diagram image](https://github.com/Ritik574-coder/sqlserver-datawarehouse/blob/main/Docs/relation_digram.gif)
 
 ---
 
