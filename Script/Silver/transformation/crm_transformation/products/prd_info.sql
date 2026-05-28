@@ -245,13 +245,15 @@ FROM Bronze.crm_prd_info ;
 --############################################################################################
 --########################### CRM_PRD_INFO DATA TRANSFORMATION ###############################
 --############################################################################################
+WITH analysis AS 
+(
 SELECT 
     prd_id,
-    SUBSTRING(prd_key,1, 5) as cat_id,
+    CONCAT(SUBSTRING(prd_key,1, 2), '_',SUBSTRING(prd_key, 4,2)) as cat_id,
 
     CASE 
         WHEN prd_key IS NULL OR LEN(prd_key) < 10 THEN 'Unknown'
-        ELSE TRIM(UPPER(prd_key))
+        ELSE SUBSTRING(TRIM(UPPER(prd_key)),7,LEN(TRIM(UPPER(prd_key))))
     END as prd_key,
 
     CASE 
@@ -291,4 +293,20 @@ FROM
     ROW_NUMBER() OVER(PARTITION BY prd_id ORDER BY prd_end_dt DESC) as flag
     FROM Bronze.crm_prd_info
     WHERE prd_id IS NOT NULL 
-)t ; 
+)t 
+)
+SELECT 
+    a.cat_id,
+    a.prd_key,
+    a.prd_id,
+    s.sls_prd_key
+FROM analysis as a 
+LEFT JOIN Bronze.crm_sales_details as s 
+ON s.sls_prd_key = a.prd_key
+WHERE s.sls_prd_key IS NULL 
+OR a.prd_key IS NULL ; 
+
+
+SELECT * from Bronze.crm_sales_details ;
+
+
