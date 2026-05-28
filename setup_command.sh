@@ -208,9 +208,9 @@ git add .
 git commit -m "Implement bronze layer ETL process"
 
 # commit with co-author
-git commit -m "Implement bronze layer ETL process
+git commit -m "addign adding relatino digram file and cleaning product table
 
-Co-authored-by: Contributor Name <contributor@example.com>"
+Co-authored-by: ritsky-project <ritsky598@gmail.com>"
 
 # push changes to github
 git push origin warehouse_branch

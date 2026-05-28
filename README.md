@@ -49,6 +49,11 @@ The project follows the **Medallion Architecture** — a layered data design pat
 The data warehouse is structured as a **SQL Server** database with three schema layers, each serving a distinct purpose in the data pipeline.
 
 ---
+## 🧩 Entity Relationship Diagram (ERD)
+
+[relationship diagram image]
+
+---
 
 ## 📂 Data Sources
 

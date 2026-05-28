@@ -1,0 +1,66 @@
+Table silver.crm_cust_info {
+cst_id int pk
+cst_key nvarchar
+cst_firstname nvarchar
+cst_lastname nvarchar
+cst_marital_status nvarchar
+cst_gndr nvarchar
+cst_create_date date
+dwh_create_date datetime
+}
+
+Table silver.crm_prd_info {
+prd_id int pk
+cat_id nvarchar
+prd_key nvarchar
+prd_nm nvarchar
+prd_cost decimal
+prd_line nvarchar
+prd_start_dt date
+prd_end_dt date
+dwh_create_date datetime
+}
+
+Table silver.crm_sales_details {
+sls_ord_num nvarchar
+sls_prd_key nvarchar
+sls_cust_id int
+sls_order_dt date
+sls_ship_dt date
+sls_due_dt date
+sls_sales decimal
+sls_quantity int
+sls_price decimal
+dwh_create_date datetime
+}
+
+Table silver.erp_cust_az12 {
+cid nvarchar
+bdate date
+gen nvarchar
+dwh_create_date datetime
+}
+
+Table silver.erp_loc_a101 {
+cid nvarchar
+cntry nvarchar
+dwh_create_date datetime
+}
+
+Table silver.erp_px_cat_g1v2 {
+id nvarchar
+cat nvarchar unique
+subcat nvarchar
+maintenance nvarchar
+dwh_create_date datetime
+}
+
+Ref: silver.crm_sales_details.sls_cust_id > silver.crm_cust_info.cst_id
+
+Ref: silver.crm_sales_details.sls_prd_key > silver.crm_prd_info.prd_key
+
+Ref: "silver"."crm_prd_info"."cat_id" < "silver"."erp_px_cat_g1v2"."cat"
+
+Ref: "silver"."crm_cust_info"."cst_key" < "silver"."erp_cust_az12"."cid"
+
+Ref: "silver"."crm_cust_info"."cst_key" < "silver"."erp_loc_a101"."cid"
