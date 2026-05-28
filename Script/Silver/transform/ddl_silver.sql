@@ -1,186 +1,292 @@
+
 /*=============================================================================================
---====CREATING DDL FOR SILVER LAYER
+--==== CREATING DDL FOR SILVER LAYER
 ===============================================================================================
-purpose : 
-	these script will create tables for bronze layer ,
-	if table is already created if will drop table and recreate .
-	
-	the script will create these following table .
-		- bronze.crm_cust_info 
-		- bronze.crm_prd_info
-		- bronze.crm_sales_details
-		
-		- bronze.erp_cust_az12
-		- bronze.erp_loc_a101
-		- bronze.erp_px_cat_g1v2
+Purpose :
+    These scripts create tables for the Silver layer.
+
+    If tables already exist, they will be dropped and recreated.
+
+    The script will create the following tables:
+        - silver.crm_cust_info
+        - silver.crm_prd_info
+        - silver.crm_sales_details
+
+        - silver.erp_cust_az12
+        - silver.erp_loc_a101
+        - silver.erp_px_cat_g1v2
+
 WARNING :
-	execute these script will drop you tables if exists
-	all data will permanently deleted .
-	
-	ensure that backup are available before executing these script .
-	
+    Executing this script will DROP existing Silver tables.
+
+    All existing data in those tables will be permanently deleted.
+
+    Ensure backups are available before execution.
+
 Author : Ritik__
-Created on : 2026-02-25
+Created on : 2026-05-28
 Version : 1.0
-project : DataWarehouse2
-schema : Bronze
+Project : BusinessDW
+Schema : Silver
 
 Environment :
-	Development / Testing
-	
+    Development / Testing
+
 Dependencies :
     - SQL Server Management Studio (SSMS)
 =============================================================================================*/
 
--- Switch Databse to BusinessDW databse
-USE BusinessDW ;
+-- Switch to BusinessDW database
+USE BusinessDW;
 GO
 
--- Safety check to ensure we are connected to the correct database
+-- Safety check
 IF DB_NAME() NOT IN ('BusinessDW')
 BEGIN
-    THROW 50000, 'Error: Not connected to BusinessDW database. Please switch to BusinessDW before running this script.', 1;
+    THROW 50000, 'Error: Not connected to BusinessDW database.', 1;
     RETURN;
 END;
 GO
 
-/*===============================================================
-Schema : Silver | Source : CRM | Table : Silver.crm_cust_info
---=============================================================*/
-
--- Dropping table Silver.crm_cust_info if exists
-IF OBJECT_ID('Silver.crm_cust_info' , 'U') IS NOT NULL 
-BEGIN
-    PRINT 'Dropping Table Silver.crm_cust_info......' ;
-    DROP TABLE Silver.crm_cust_info ;
-END ;
-GO 
-
--- Creating table Silver.crm_cust_info 
-PRINT 'Creating table Silver.crm_cust_info.......' ;
-CREATE TABLE Silver.crm_cust_info
-(
-    cst_id              INT         ,
-    cst_key             NVARCHAR(30),
-
-    cst_firstname       NVARCHAR(50),
-    cst_lastname        NVARCHAR(50),
-    cst_marital_status  NVARCHAR(10),
-    cst_gndr            NVARCHAR(10),
-    cst_create_date     DATE,
-    dwh_create_date     DATETIME2 DEFAULT GETDATE()        
+/*============================================================================
+Create Schema if not exists
+============================================================================*/
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.schemas
+    WHERE name = 'silver'
 )
-GO
-
-/*===============================================================
-Schema : Silver | Source : CRM | Table : Silver.crm_prd_info
---=============================================================*/
-
-IF OBJECT_ID('Silver.crm_prd_info', 'U') IS NOT NULL
 BEGIN
-    PRINT 'Dropping Table Silver.crm_prd_info.........' ;
-    DROP TABLE Silver.crm_prd_info;
-END ;
+    EXEC('CREATE SCHEMA silver');
+END;
 GO
 
-PRINT 'Creating table Silver.crm_prd_info...........' ;
-CREATE TABLE Silver.crm_prd_info (
-    prd_id          INT,
-    prd_key         NVARCHAR(50),
+/*============================================================================
+Silver : CRM | Table : silver.crm_cust_info
+============================================================================*/
 
-    prd_nm          NVARCHAR(50),
-    prd_cost        DECIMAL(10,2),
-    prd_line        NVARCHAR(20),
-    prd_start_dt    DATE,
-    prd_end_dt      DATE,
-    dwh_create_date DATETIME2 DEFAULT GETDATE()
+-- Drop table if exists
+IF OBJECT_ID('silver.crm_cust_info', 'U') IS NOT NULL
+BEGIN
+    PRINT '>> Dropping table silver.crm_cust_info...';
+    DROP TABLE silver.crm_cust_info;
+END;
+GO
+
+-- Create table
+PRINT '>> Creating table silver.crm_cust_info...';
+
+CREATE TABLE silver.crm_cust_info
+(
+    cst_id                 INT             NOT NULL,
+    cst_key                NVARCHAR(50)    NOT NULL,
+    cst_firstname          NVARCHAR(50)    NULL,
+    cst_lastname           NVARCHAR(50)    NULL,
+    cst_marital_status     NVARCHAR(20)    NULL,
+    cst_gndr               NVARCHAR(10)    NULL,
+    cst_create_date        DATE            NULL,
+    dwh_create_date        DATETIME2       DEFAULT GETDATE(),
+
+    CONSTRAINT pk_silver_crm_cust_info
+        PRIMARY KEY (cst_id)
 );
 GO
 
-/*===============================================================
-Schema : Silver | Source : CRM | Table : Silver.crm_sales_details
---=============================================================*/
+/*============================================================================
+Silver : CRM | Table : silver.crm_prd_info
+============================================================================*/
 
+-- Drop table if exists
+IF OBJECT_ID('silver.crm_prd_info', 'U') IS NOT NULL
+BEGIN
+    PRINT '>> Dropping table silver.crm_prd_info...';
+    DROP TABLE silver.crm_prd_info;
+END;
+GO
+
+-- Create table
+PRINT '>> Creating table silver.crm_prd_info...';
+
+CREATE TABLE silver.crm_prd_info
+(
+    prd_id                 INT              NOT NULL,
+    cat_id                 NVARCHAR(50)     NULL,
+    prd_key                NVARCHAR(30)     NOT NULL,
+    prd_nm                 NVARCHAR(155)    NULL,
+    prd_cost               DECIMAL(18,2)    NULL,
+    prd_line               NVARCHAR(30)     NULL,
+    prd_start_dt           DATE             NULL,
+    prd_end_dt             DATE             NULL,
+    dwh_create_date        DATETIME2        DEFAULT GETDATE(),
+
+    CONSTRAINT pk_silver_crm_prd_info
+        PRIMARY KEY (prd_id)
+);
+GO
+
+/*============================================================================
+Silver : CRM | Table : silver.crm_sales_details
+============================================================================*/
+
+-- Drop table if exists
 IF OBJECT_ID('silver.crm_sales_details', 'U') IS NOT NULL
 BEGIN
-    PRINT 'Dropping table silver.crm_sales_details........' ;
-    DROP TABLE silver.crm_sales_details ;
-END ;
+    PRINT '>> Dropping table silver.crm_sales_details...';
+    DROP TABLE silver.crm_sales_details;
+END;
 GO
 
-PRINT 'Creating table silver.crm_sales_details........' ;
-CREATE TABLE Silver.crm_sales_details (
-    sls_ord_num    NVARCHAR(20),
-    sls_prd_key    NVARCHAR(20),
-    sls_cust_id    INT,
+-- Create table
+PRINT '>> Creating table silver.crm_sales_details...';
 
-    sls_order_dt   DATE,
-    sls_ship_dt    DATE,
-    sls_due_dt     DATE,
-    sls_sales      DECIMAL(10,2),
-    sls_quantity   INT,
-    sls_price      DECIMAL(10,2),
-    dwh_create_date DATETIME2 DEFAULT GETDATE()
+CREATE TABLE silver.crm_sales_details
+(
+    sls_ord_num            NVARCHAR(20)     NOT NULL,
+    sls_prd_key            NVARCHAR(50)     NOT NULL,
+    sls_cust_id            INT              NOT NULL,
+    sls_order_dt           DATE             NULL,
+    sls_ship_dt            DATE             NULL,
+    sls_due_dt             DATE             NULL,
+    sls_sales              DECIMAL(18,2)    NULL,
+    sls_quantity           INT              NULL,
+    sls_price              DECIMAL(18,2)    NULL,
+
+    dwh_create_date        DATETIME2        DEFAULT GETDATE()
 );
 GO
 
-/*===============================================================
-Schema : Silver | Source : ERP | Table : Silver.erp_loc_a101
---=============================================================*/
+/*============================================================================
+Silver : ERP | Table : silver.erp_cust_az12
+============================================================================*/
 
-IF OBJECT_ID('Silver.erp_loc_a101', 'U') IS NOT NULL
+-- Drop table if exists
+IF OBJECT_ID('silver.erp_cust_az12', 'U') IS NOT NULL
 BEGIN
-    PRINT 'Dropping table Silver.erp_loc_a101..........' ;
-    DROP TABLE Silver.erp_loc_a101 ;
-END ;
+    PRINT '>> Dropping table silver.erp_cust_az12...';
+    DROP TABLE silver.erp_cust_az12;
+END;
 GO
 
-PRINT 'Creating table Silver.erp_loc_a101........' ;
-CREATE TABLE Silver.erp_loc_a101 (
-    cid            NVARCHAR(30),
-    cntry          NVARCHAR(50),
-    dwh_create_date DATETIME2 DEFAULT GETDATE()
+-- Create table
+PRINT '>> Creating table silver.erp_cust_az12...';
+
+CREATE TABLE silver.erp_cust_az12
+(
+    cid                    NVARCHAR(30)     NOT NULL,
+    bdate                  DATE             NULL,
+    gen                    NVARCHAR(20)     NULL,
+    dwh_create_date        DATETIME2        DEFAULT GETDATE(),
+
+    CONSTRAINT pk_silver_erp_cust_az12
+        PRIMARY KEY (cid)
 );
 GO
 
-/*===============================================================
-Schema : Silver | Source : ERP | Table : Silver.erp_cust_az12
---=============================================================*/
+/*============================================================================
+Silver : ERP | Table : silver.erp_loc_a101
+============================================================================*/
 
-IF OBJECT_ID('Silver.erp_cust_az12', 'U') IS NOT NULL
+-- Drop table if exists
+IF OBJECT_ID('silver.erp_loc_a101', 'U') IS NOT NULL
 BEGIN
-    PRINT 'Dropping table Silver.erp_cust_az12......';
-    DROP TABLE Silver.erp_cust_az12;
-END ;
+    PRINT '>> Dropping table silver.erp_loc_a101...';
+    DROP TABLE silver.erp_loc_a101;
+END;
 GO
 
-PRINT 'Creating table Silver.erp_cust_az12......' ;
-CREATE TABLE Silver.erp_cust_az12 (
-    cid           NVARCHAR(30),
-    bdate         DATE,
-    gen           NVARCHAR(10),
-    dwh_create_date DATETIME2 DEFAULT GETDATE()
+-- Create table
+PRINT '>> Creating table silver.erp_loc_a101...';
+
+CREATE TABLE silver.erp_loc_a101
+(
+    cid                    NVARCHAR(30)     NOT NULL,
+    cntry                  NVARCHAR(155)    NULL,
+    dwh_create_date        DATETIME2        DEFAULT GETDATE(),
+
+    CONSTRAINT pk_silver_erp_loc_a101
+        PRIMARY KEY (cid)
 );
 GO
 
-/*===============================================================
-Schema : Silver | Source : ERP | Table : Silver.erp_px_cat_g1v2
---=============================================================*/
+/*============================================================================
+Silver : ERP | Table : silver.erp_px_cat_g1v2
+============================================================================*/
 
-IF OBJECT_ID('Silver.erp_px_cat_g1v2', 'U') IS NOT NULL
+-- Drop table if exists
+IF OBJECT_ID('silver.erp_px_cat_g1v2', 'U') IS NOT NULL
 BEGIN
-    PRINT 'Dropping table Silver.erp_px_cat_g1v2.......' ;
-    DROP TABLE Silver.erp_px_cat_g1v2;
-END ;
+    PRINT '>> Dropping table silver.erp_px_cat_g1v2...';
+    DROP TABLE silver.erp_px_cat_g1v2;
+END;
 GO
 
-PRINT 'Creating table Silver.erp_px_cat_g1v2.......' ;
-CREATE TABLE Silver.erp_px_cat_g1v2 (
-    id            NVARCHAR(30),
-    cat           NVARCHAR(50),
-    subcat        NVARCHAR(50),
-    maintenance   NVARCHAR(10),
-    dwh_create_date DATETIME2 DEFAULT GETDATE()
+-- Create table
+PRINT '>> Creating table silver.erp_px_cat_g1v2...';
+
+CREATE TABLE silver.erp_px_cat_g1v2
+(
+    id                     NVARCHAR(20)      NOT NULL,
+    cat                    NVARCHAR(50)      NULL,
+    subcat                 NVARCHAR(100)     NULL,
+    maintenance            NVARCHAR(10)      NULL,
+    dwh_create_date        DATETIME2         DEFAULT GETDATE(),
+
+    CONSTRAINT pk_silver_erp_px_cat_g1v2
+        PRIMARY KEY (id)
 );
 GO
---==============================================================
+
+/*============================================================================
+Foreign Key Constraints
+============================================================================*/
+
+-- CRM Sales -> CRM Customers
+ALTER TABLE silver.crm_sales_details
+ADD CONSTRAINT fk_sales_customer
+FOREIGN KEY (sls_cust_id)
+REFERENCES silver.crm_cust_info(cst_id);
+GO
+
+-- CRM Sales -> CRM Products
+ALTER TABLE silver.crm_sales_details
+ADD CONSTRAINT fk_sales_product
+FOREIGN KEY (sls_prd_key)
+REFERENCES silver.crm_prd_info(prd_key);
+GO
+
+-- CRM Products -> ERP Product Categories
+ALTER TABLE silver.crm_prd_info
+ADD CONSTRAINT fk_product_category
+FOREIGN KEY (cat_id)
+REFERENCES silver.erp_px_cat_g1v2(id);
+GO
+
+/*============================================================================
+Indexes
+============================================================================*/
+
+CREATE INDEX idx_sales_customer
+ON silver.crm_sales_details(sls_cust_id);
+GO
+
+CREATE INDEX idx_sales_product
+ON silver.crm_sales_details(sls_prd_key);
+GO
+
+CREATE INDEX idx_customer_key
+ON silver.crm_cust_info(cst_key);
+GO
+
+CREATE INDEX idx_product_cat
+ON silver.crm_prd_info(cat_id);
+GO
+
+/*============================================================================
+Script Completed
+============================================================================*/
+
+PRINT '=====================================================';
+PRINT 'Silver Layer Tables Created Successfully';
+PRINT '=====================================================';
+GO
+
