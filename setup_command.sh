@@ -208,7 +208,7 @@ git add .
 git commit -m "Implement bronze layer ETL process"
 
 # commit with co-author
-git commit -m "data cleaning and transformation , digram adding and query adding in this commit 
+git commit -m "data cleaning and transformation 
 
 Co-authored-by: ritsky-project <ritsky598@gmail.com>"
 

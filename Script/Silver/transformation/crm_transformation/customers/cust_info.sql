@@ -40,6 +40,31 @@ FROM Bronze.crm_cust_info
     GROUP BY cst_id 
     ORDER BY id_count DESC ;
 
+-- custoemr id validation in custoemr info 
+SELECT
+    REPLACE(cl.cid, '-', '') as cid
+FROM Bronze.erp_loc_a101 as cl
+WHERE REPLACE(cl.cid, '-', '') IS NULL 
+OR REPLACE(cl.cid, '-', '') NOT LIKE '%AW%';
+
+-- customer id validatino in customer location 
+SELECT 
+    SUBSTRING(ci.cid, 4, LEN(ci.cid)) as cid
+FROM Bronze.erp_cust_az12 as ci 
+WHERE SUBSTRING(ci.cid, 4, LEN(ci.cid)) IS NULL 
+OR SUBSTRING(ci.cid, 4, LEN(ci.cid)) NOT LIKE '%AW%';
+
+-- cst_id validation 
+SELECT 
+    cc.cst_key,
+    SUBSTRING(ci.cid, 4, LEN(ci.cid)) as cid,
+    REPLACE(cl.cid, '-', '') as cid
+FROM Bronze.crm_cust_info as cc  
+    LEFT JOIN Bronze.erp_cust_az12 as ci
+ON cc.cst_key = SUBSTRING(ci.cid, 4, LEN(cid))
+    LEFT JOIN Bronze.erp_loc_a101 as cl
+ON cc.cst_key = REPLACE(cl.cid, '-', '') ;
+
 -- duplicate check in customerid 
 SELECT 
 *
