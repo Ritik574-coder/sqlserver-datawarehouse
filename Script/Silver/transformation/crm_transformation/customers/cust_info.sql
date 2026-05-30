@@ -54,6 +54,14 @@ FROM Bronze.erp_cust_az12 as ci
 WHERE SUBSTRING(ci.cid, 4, LEN(ci.cid)) IS NULL 
 OR SUBSTRING(ci.cid, 4, LEN(ci.cid)) NOT LIKE '%AW%';
 
+-- customer id data validation in sales details 
+SELECT 
+    c.cst_id,
+    s.sls_cust_id 
+FROM Bronze.crm_cust_info as c  
+LEFT JOIN Bronze.crm_sales_details as s  
+ON c.cst_id = s.sls_cust_id; 
+
 -- cst_id validation 
 SELECT 
     cc.cst_key,
@@ -234,7 +242,16 @@ FROM Bronze.crm_cust_info ;
 --############################################################################################
 --################################# CRM_CUST_INFO TRANSFRM DATA ##############################
 --############################################################################################
-
+INSERT INTO Silver.crm_cust_info
+(
+    cst_id,
+    cst_key,
+    cst_firstname,
+    cst_lastname,
+    cst_marital_status,
+    cst_gndr,
+    cst_create_date
+)
 SELECT 
     cst_id,
 
@@ -281,4 +298,3 @@ FROM
     FROM Bronze.crm_cust_info
     WHERE cst_id IS NOT NULL 
 )t WHERE flag = 1 ;
-

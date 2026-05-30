@@ -172,6 +172,7 @@ PRINT '>> Creating table silver.erp_cust_az12...';
 
 CREATE TABLE silver.erp_cust_az12
 (
+    cust_key               NVARCHAR(30)     NOT NULL,
     cid                    NVARCHAR(30)     NOT NULL,
     bdate                  DATE             NULL,
     gen                    NVARCHAR(20)     NULL,
