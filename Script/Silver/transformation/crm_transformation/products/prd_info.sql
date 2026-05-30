@@ -47,6 +47,13 @@ FROM Bronze.crm_prd_info
     GROUP BY prd_id
     ORDER BY id_count DESC ;   
 
+-- check prd_start_dt < prd_end_dt
+SELECT 
+    prd_start_dt,
+    prd_end_dt 
+FROM Bronze.crm_prd_info 
+WHERE prd_start_dt < prd_end_dt ;
+
 -- prd_id cleaning and standardazition 
 SELECT 
     prd_id,
@@ -293,7 +300,7 @@ FROM
     ROW_NUMBER() OVER(PARTITION BY prd_id ORDER BY prd_end_dt DESC) as flag
     FROM Bronze.crm_prd_info
     WHERE prd_id IS NOT NULL 
-)t 
+)t WHERE flag = 1
 )
 SELECT 
     a.cat_id,
@@ -301,12 +308,9 @@ SELECT
     a.prd_id,
     s.sls_prd_key
 FROM analysis as a 
-LEFT JOIN Bronze.crm_sales_details as s 
-ON s.sls_prd_key = a.prd_key
-WHERE s.sls_prd_key IS NULL 
-OR a.prd_key IS NULL ; 
+INNER JOIN  Bronze.crm_sales_details as s 
+ON s.sls_prd_key = a.prd_key ; 
 
+SELECT * FROM Bronze.crm_prd_info ;
 
-SELECT * from Bronze.crm_sales_details ;
-
-
+SELECT * FROM Bronze.crm_sales_details ;
