@@ -118,9 +118,6 @@ CREATE TABLE silver.crm_prd_info
     prd_start_dt           DATE             NULL,
     prd_end_dt             DATE             NULL,
     dwh_create_date        DATETIME2        DEFAULT GETDATE(),
-
-    CONSTRAINT pk_silver_crm_prd_info
-        PRIMARY KEY (prd_id)
 );
 GO
 

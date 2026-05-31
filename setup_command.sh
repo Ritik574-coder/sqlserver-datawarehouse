@@ -154,26 +154,26 @@ cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
 # =========================================================
 
 # Customer Information
-/data/Dataset/CRM/cust_info.csv
+/data/Dataset/business_data/CRM/cust_info.csv
 
 # Product Information
-/data/Dataset/CRM/prd_info.csv
+/data/Dataset/business_data/CRM/prd_info.csv
 
 # Sales Details
-/data/Dataset/CRM/sales_details.csv
+/data/Dataset/business_data/CRM/sales_details.csv
 
 # =========================================================
 # ERP FILE PATHS
 # =========================================================
 
 # Customer Master
-/data/Dataset/ERP/CUST_AZ12.csv
+/data/Dataset/business_data/ERP/CUST_AZ12.csv
 
 # Location Master
-/data/Dataset/ERP/LOC_A101.csv
+/data/Dataset/business_data/ERP/LOC_A101.csv
 
 # Product Category
-/data/Dataset/ERP/PX_CAT_G1V2.csv
+/data/Dataset/business_data/ERP/PX_CAT_G1V2.csv
 
 ################################################################################
 ########################### ADDING GIT COMMAND  ################################
