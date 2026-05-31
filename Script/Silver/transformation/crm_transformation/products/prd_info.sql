@@ -85,13 +85,20 @@ WHERE prd_key IS NULL
    OR prd_key != TRIM(UPPER(prd_key))
    OR LEN(prd_key) < 10;
 
--- prd_id cleaning and standardazition 
+-- duplicate check in product key 
+SELECT 
+SUBSTRING(prd_key, 7, LEN(prd_key)) as prd_key
+FROM Bronze.crm_prd_info 
+
+-- prd_key cleaning and standardazition 
 SELECT 
     CASE 
         WHEN prd_key IS NULL OR LEN(prd_key) < 10 THEN 'Unknown'
         ELSE TRIM(UPPER(prd_key))
     END as prd_key
 FROM Bronze.crm_prd_info ;
+
+
 
 --============================================================================================
 --================================== prd_nm column data cleaning =============================
@@ -206,8 +213,8 @@ FROM pattern_analysis
 SELECT 
     CASE 
         WHEN prd_start_dt IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, prd_start_dt) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, prd_start_dt)
+        WHEN TRY_CONVERT(DATETIME, prd_start_dt) IS NULL THEN NULL 
+        ELSE TRY_CONVERT(DATETIME, prd_start_dt)
     END AS prd_start_dt
 FROM Bronze.crm_prd_info ;
 
@@ -242,24 +249,38 @@ FROM pattern_analysis
 
 -- prd_end_dt cleaning and standardazition 
 SELECT 
+    prd_nm,
+    prd_key,
+    prd_start_dt,
     CASE 
-        WHEN prd_end_dt IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, prd_end_dt) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, prd_end_dt)
+        WHEN LEAD(prd_start_dt) OVER(PARTITION BY prd_key ORDER BY prd_start_dt) IS NULL THEN NULL
+        ELSE DATEADD(DAY, -1, LEAD(prd_start_dt) OVER(PARTITION BY prd_key ORDER BY prd_start_dt))
     END AS prd_end_dt
-FROM Bronze.crm_prd_info ;
-
+FROM Bronze.crm_prd_info
+WHERE prd_key IN (
+    'AC-HE-HL-U509-B', 'AC-HE-HL-U509-R', 'AC-HE-HL-U509', 'CL-JE-LJ-0192-X', 'CO-MF-FR-M94B-46'
+);
 --############################################################################################
 --########################### CRM_PRD_INFO DATA TRANSFORMATION ###############################
 --############################################################################################
-WITH analysis AS 
+INSERT INTO Silver.crm_prd_info 
 (
+    prd_id,
+    cat_id, 
+    prd_key,
+    prd_nm, 
+    prd_cost,
+    prd_line,
+    prd_start_dt,          
+    prd_end_dt 
+)
 SELECT 
     prd_id,
-    CONCAT(SUBSTRING(prd_key,1, 2), '_',SUBSTRING(prd_key, 4,2)) as cat_id,
+
+    REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') as cat_id,
 
     CASE 
-        WHEN prd_key IS NULL OR LEN(prd_key) < 10 THEN 'Unknown'
+        WHEN prd_key IS NULL THEN 'Unknown'
         ELSE SUBSTRING(TRIM(UPPER(prd_key)),7,LEN(TRIM(UPPER(prd_key))))
     END as prd_key,
 
@@ -289,28 +310,7 @@ SELECT
     END AS prd_start_dt,
 
     CASE 
-        WHEN prd_end_dt IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, prd_end_dt) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, prd_end_dt)
+        WHEN LEAD(TRY_CONVERT(DATE, prd_start_dt)) OVER(PARTITION BY prd_key ORDER BY prd_start_dt) IS NULL THEN NULL
+        ELSE DATEADD(DAY, -1, LEAD(TRY_CONVERT(DATE, prd_start_dt)) OVER(PARTITION BY prd_key ORDER BY TRY_CONVERT(DATE, prd_start_dt)))
     END AS prd_end_dt
-FROM 
-(
-    SELECT 
-    *,
-    ROW_NUMBER() OVER(PARTITION BY prd_id ORDER BY prd_end_dt DESC) as flag
-    FROM Bronze.crm_prd_info
-    WHERE prd_id IS NOT NULL 
-)t WHERE flag = 1
-)
-SELECT 
-    a.cat_id,
-    a.prd_key,
-    a.prd_id,
-    s.sls_prd_key
-FROM analysis as a 
-INNER JOIN  Bronze.crm_sales_details as s 
-ON s.sls_prd_key = a.prd_key ; 
-
-SELECT * FROM Bronze.crm_prd_info ;
-
-SELECT * FROM Bronze.crm_sales_details ;
+FROM Bronze.crm_prd_info ;

@@ -91,8 +91,8 @@ CREATE TABLE Bronze.crm_prd_info
 	prd_nm			NVARCHAR(155) NULL,
 	prd_cost		DECIMAL(10,2) NULL,
 	prd_line		NVARCHAR(30)  NULL,
-	prd_start_dt	DATE          NULL,
-	prd_end_dt		DATE          NULL
+	prd_start_dt	DATETIME      NULL,
+	prd_end_dt		DATETIME      NULL
 ) ;
 GO
 
