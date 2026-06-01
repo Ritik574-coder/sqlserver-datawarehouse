@@ -147,7 +147,7 @@ mkdir dataset
 mkdir {business_data,gym_data,ai_data}
 
 # Duplicate copies created inside business_data/
-cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
+docker cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
 
 # =========================================================
 # CRM FILE PATHS
@@ -208,7 +208,7 @@ git add .
 git commit -m "Implement bronze layer ETL process"
 
 # commit with co-author
-git commit -m "data cleaning and transformation 
+git commit -m "File transfer to docker container and setup of data pipeline and database credentials and cleaning data 
 
 Co-authored-by: ritsky-project <ritsky598@gmail.com>"
 
