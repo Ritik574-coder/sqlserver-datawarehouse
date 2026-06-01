@@ -390,5 +390,3 @@ SELECT
         ELSE sls_sales
     END AS sls_sales
 FROM Bronze.crm_sales_details ;
-
-select * from  Silver.crm_sales_details;

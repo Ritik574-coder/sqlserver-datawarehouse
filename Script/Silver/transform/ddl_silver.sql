@@ -173,10 +173,7 @@ CREATE TABLE silver.erp_cust_az12
     cid                    NVARCHAR(30)     NOT NULL,
     bdate                  DATE             NULL,
     gen                    NVARCHAR(20)     NULL,
-    dwh_create_date        DATETIME2        DEFAULT GETDATE(),
-
-    CONSTRAINT pk_silver_erp_cust_az12
-        PRIMARY KEY (cid)
+    dwh_create_date        DATETIME2        DEFAULT GETDATE()
 );
 GO
 
@@ -199,10 +196,8 @@ CREATE TABLE silver.erp_loc_a101
 (
     cid                    NVARCHAR(30)     NOT NULL,
     cntry                  NVARCHAR(155)    NULL,
-    dwh_create_date        DATETIME2        DEFAULT GETDATE(),
+    dwh_create_date        DATETIME2        DEFAULT GETDATE()
 
-    CONSTRAINT pk_silver_erp_loc_a101
-        PRIMARY KEY (cid)
 );
 GO
 
@@ -227,10 +222,7 @@ CREATE TABLE silver.erp_px_cat_g1v2
     cat                    NVARCHAR(50)      NULL,
     subcat                 NVARCHAR(100)     NULL,
     maintenance            NVARCHAR(10)      NULL,
-    dwh_create_date        DATETIME2         DEFAULT GETDATE(),
-
-    CONSTRAINT pk_silver_erp_px_cat_g1v2
-        PRIMARY KEY (id)
+    dwh_create_date        DATETIME2         DEFAULT GETDATE()
 );
 GO
 

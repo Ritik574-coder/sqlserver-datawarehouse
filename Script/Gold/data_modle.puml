@@ -1,0 +1,41 @@
+Table gold.dim_customers {
+customer_id int pk
+customer_key nvarchar
+first_name nvarchar
+last_name nvarchar
+country nvarchar
+gender nvarchar
+marital_status nvarchar
+birth_date date
+customer_create_date date
+}
+
+Table gold.dim_products {
+product_id int pk
+category_id nvarchar
+product_key nvarchar
+category nvarchar
+subcategory nvarchar
+product_line nvarchar
+product_name nvarchar
+maintenance_required nvarchar
+product_cost decimal
+product_start_date date
+product_end_date date
+}
+
+Table gold.fact_sales {
+order_number nvarchar
+product_key nvarchar
+customer_id int
+order_date date
+shipping_date date
+due_date date
+sales_amount decimal
+quantity_sold int
+unit_price decimal
+}
+
+Ref: gold.fact_sales.customer_id > gold.dim_customers.customer_id
+
+Ref: gold.fact_sales.product_key > gold.dim_products.product_key
