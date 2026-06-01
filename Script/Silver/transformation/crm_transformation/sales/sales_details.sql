@@ -40,149 +40,138 @@ FROM Bronze.crm_sales_details
 --============================================================================================
 --================================ sls_prd_key column data profiling =========================
 --============================================================================================
-
+SELECT 
+    sls_ord_num,
+    sls_prd_key,
+    sls_cust_id,
+    sls_order_dt,
+    sls_ship_dt,
+    sls_due_dt,
+    sls_sales,
+    sls_quantity,
+    sls_price
+FROM Bronze.crm_sales_details 
+WHERE sls_prd_key NOT IN (SELECT prd_key FROM Silver.crm_prd_info );
 
 --============================================================================================
 --================================= sls_cust_id column data profiling =========================
 --============================================================================================
-
-
+SELECT 
+    sls_ord_num,
+    sls_prd_key,
+    sls_cust_id,
+    sls_order_dt,
+    sls_ship_dt,
+    sls_due_dt,
+    sls_sales,
+    sls_quantity,
+    sls_price
+FROM Bronze.crm_sales_details 
+WHERE sls_cust_id NOT IN (SELECT cst_id FROM Silver.crm_cust_info);
 --============================================================================================
 --=============================== sls_order_dt column data profiling =========================
 --============================================================================================
--- cst_create_date data profiling 
-SELECT 
-    cst_create_date
-FROM Bronze.crm_cust_info 
-WHERE cst_create_date  IS NULL 
-OR TRY_CONVERT(DATE, cst_create_date)IS NULL ;
-
--- cst_create_date pattern analysis 
-WITH pattern_analysis AS 
-(
+-- sls_order_dt data profiling 
 SELECT
-    TRANSLATE(
-        TRIM(LOWER(cst_create_date)),
-        '0123456789abcdefghijklmnopqrstuvwxyz',
-        '9999999999aaaaaaaaaaaaaaaaaaaaaaaaaa'
-    ) as pattern
-FROM Bronze.crm_cust_info 
-)
-SELECT 
-    pattern,
-    COUNT(*) as status_count,
-    CAST(ROUND(COUNT(*)*100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar) AS percentages
-FROM pattern_analysis
-    GROUP BY pattern 
-    ORDER BY status_count ; 
-
--- cst_create_date cleaning and standardazition 
-SELECT 
-    CASE 
-        WHEN cst_create_date IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, cst_create_date) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, cst_create_date)
-    END AS cst_create_date
-FROM Bronze.crm_cust_info ;
-
---============================================================================================
---================================ sls_ship_dt column data profiling =========================
---============================================================================================
--- sls_ship_dt data profiling 
-SELECT 
-    sls_ship_dt
-FROM Bronze.crm_sales_details
-WHERE sls_ship_dt  IS NULL 
-OR TRY_CONVERT(INT, sls_ship_dt)IS NULL ;
-
-
-SELECT 
-CAST(sls_ship_dt as date) AS DATE 
-FROM Bronze.crm_sales_details ;
-
--- sls_ship_dt pattern analysis 
-WITH pattern_analysis AS 
-(
-SELECT
-    TRANSLATE(
-        TRIM(LOWER(sls_ship_dt)),
-        '0123456789',
-        '9999999999'
-    ) as pattern
+    sls_order_dt 
 FROM Bronze.crm_sales_details 
-)
-SELECT 
-    pattern,
-    COUNT(*) as status_count,
-    CAST(ROUND(COUNT(*)*100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar) AS percentages
-FROM pattern_analysis
-    GROUP BY pattern 
-    ORDER BY status_count ; 
-
--- cst_create_date cleaning and standardazition 
-SELECT 
-    CASE 
-        WHEN cst_create_date IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, cst_create_date) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, cst_create_date)
-    END AS cst_create_date
-FROM Bronze.crm_cust_info ;
-
---============================================================================================
---================================= sls_due_dt column data profiling =========================
---============================================================================================
--- cst_create_date data profiling 
-SELECT 
-    cst_create_date
-FROM Bronze.crm_cust_info 
-WHERE cst_create_date  IS NULL 
-OR TRY_CONVERT(DATE, cst_create_date)IS NULL ;
-
--- cst_create_date pattern analysis 
-WITH pattern_analysis AS 
-(
-SELECT
-    TRANSLATE(
-        TRIM(LOWER(cst_create_date)),
-        '0123456789abcdefghijklmnopqrstuvwxyz',
-        '9999999999aaaaaaaaaaaaaaaaaaaaaaaaaa'
-    ) as pattern
-FROM Bronze.crm_cust_info 
-)
-SELECT 
-    pattern,
-    COUNT(*) as status_count,
-    CAST(ROUND(COUNT(*)*100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar) AS percentages
-FROM pattern_analysis
-    GROUP BY pattern 
-    ORDER BY status_count ; 
-
--- cst_create_date cleaning and standardazition 
-SELECT 
-    CASE 
-        WHEN cst_create_date IS NULL THEN NULL 
-        WHEN TRY_CONVERT(DATE, cst_create_date) IS NULL THEN NULL 
-        ELSE TRY_CONVERT(DATE, cst_create_date)
-    END AS cst_create_date
-FROM Bronze.crm_cust_info ;
-
---============================================================================================
---================================ sls_sales column data profiling ===========================
---============================================================================================
+WHERE TRY_CONVERT(INT , sls_order_dt ) IS NULL 
+   OR LEN(sls_order_dt) != 8 
+   OR sls_order_dt < 0 ; 
 
 SELECT 
 TRY_CONVERT(DATE, CAST(sls_order_dt AS VARCHAR), 112) AS sls_order_dt
 FROM Bronze.crm_sales_details ;
 --============================================================================================
---================================ sls_quantity column data profiling ========================
+--================================ sls_ship_dt column data profiling =========================
+--============================================================================================
+-- sls_ship_dt data profiling 
+SELECT
+    sls_order_dt 
+FROM Bronze.crm_sales_details 
+WHERE TRY_CONVERT(INT , sls_order_dt ) IS NULL 
+   OR LEN(sls_order_dt) != 8 
+   OR sls_order_dt < 0 ; 
+
+--============================================================================================
+--================================= sls_due_dt column data profiling =========================
 --============================================================================================
 
+
+--============================================================================================
+--================================ sls_sales column data profiling ===========================
+--============================================================================================
+-- sls_sales data type check 
+SELECT 
+    sls_sales 
+FROM Bronze.crm_sales_details 
+WHERE TRY_CONVERT(DECIMAL, sls_quantity) IS NULL ;
+
+-- sls_sales data profiling 
+SELECT 
+    sls_sales 
+FROM Bronze.crm_sales_details
+WHERE sls_sales IS NULL 
+OR sls_sales < 0  ;
+
+-- sales order analysis 
+SELECT 
+    sls_sales ,
+    COUNT(*) as count_sls,
+    CAST(ROUND(COUNT(*) * 100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar)  + '%' AS percentages 
+FROM Bronze.crm_sales_details 
+GROUP BY sls_sales 
+ORDER BY count_sls DESC ; 
+
+--============================================================================================
+--================================ sls_quantity column data profiling ========================
+--============================================================================================
+-- sls_quantity data type check 
+SELECT 
+    sls_quantity 
+FROM Bronze.crm_sales_details 
+WHERE TRY_CONVERT(INT, sls_quantity) IS NULL ;
+
+-- sls_quantity data profiling 
+SELECT 
+    sls_quantity 
+FROM Bronze.crm_sales_details
+WHERE sls_quantity IS NULL 
+OR sls_quantity < 0  ;
+
+-- qunatity order analysis 
+SELECT 
+    sls_quantity ,
+    COUNT(*) as count_qt,
+    CAST(ROUND(COUNT(*) * 100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar)  + '%' AS percentages 
+FROM Bronze.crm_sales_details 
+GROUP BY sls_quantity 
+ORDER BY count_qt DESC ; 
 
 --============================================================================================
 --================================ sls_price column data profiling ===========================
 --============================================================================================
+-- sls_quantity data type check 
+SELECT 
+    sls_quantity 
+FROM Bronze.crm_sales_details 
+WHERE TRY_CONVERT(INT, sls_quantity) IS NULL ;
 
+-- sls_quantity data profiling 
+SELECT 
+    sls_quantity 
+FROM Bronze.crm_sales_details
+WHERE sls_quantity IS NULL 
+OR sls_quantity < 0  ;
 
+-- qunatity order analysis 
+SELECT 
+    sls_quantity ,
+    COUNT(*) as count_qt,
+    CAST(ROUND(COUNT(*) * 100.0/SUM(COUNT(*)) OVER(), 2)as nvarchar)  + '%' AS percentages 
+FROM Bronze.crm_sales_details 
+GROUP BY sls_quantity 
+ORDER BY count_qt DESC ; 
 
 --############################################################################################
 --########################### CRM_SALES_DETAILS DATA TRANSFORMATION ##########################

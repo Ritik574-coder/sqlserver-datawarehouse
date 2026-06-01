@@ -208,7 +208,7 @@ git add .
 git commit -m "Implement bronze layer ETL process"
 
 # commit with co-author
-git commit -m "File transfer to docker container and setup of data pipeline and database credentials and cleaning data 
+git commit -m "sales table data cleaning and validation and transformation 
 
 Co-authored-by: ritsky-project <ritsky598@gmail.com>"
 
