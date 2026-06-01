@@ -128,5 +128,3 @@ FROM
     FROM Bronze.erp_loc_a101 
     WHERE cid IS NOT NULL 
 )t WHERE flag = 1 ;
-
-SELECT * FROM Silver.erp_loc_a101 ;

@@ -175,13 +175,12 @@ SELECT
         ELSE TRY_CONVERT(DATE, bdate)
     END AS bdate,
 
-    CASE 
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') = ''       THEN 'Unknown'
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') IS NULL    THEN 'Unknown'
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') = 'm'      THEN 'Male'
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') = 'f'      THEN 'Female'
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') = 'male'   THEN 'Male'
-        WHEN REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '') = 'female' THEN 'Female'
+    CASE REPLACE(REPLACE(TRIM(LOWER(gen)), CHAR(10), ''), CHAR(13), '')
+        WHEN  ''       THEN 'Unknown'
+        WHEN  'm'      THEN 'Male'
+        WHEN  'f'      THEN 'Female'
+        WHEN 'male'    THEN 'Male'
+        WHEN 'female'  THEN 'Female'
         ELSE 'Unknown'
     END as gen
 
