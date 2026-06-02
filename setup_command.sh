@@ -141,13 +141,16 @@ echo $DB_PASSWORD
 docker exec -it -u root sqlserver bash
 
 # create file in docker terminal 
-mkdir dataset 
+mkdir Dataset
 
 # create one more file there you store you different different data 
-mkdir {business_data,gym_data,ai_data}
+mkdir {Dataset,gym_data,ai_data}
+
+# creating file 
+cd data/Dataset mkdir business_data
 
 # Duplicate copies created inside business_data/
-docker cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
+cp -r /data/Dataset/CRM /data/Dataset/ERP /data/Dataset/business_data/
 
 # =========================================================
 # CRM FILE PATHS
@@ -217,3 +220,23 @@ git push origin warehouse_branch
 
 # view commit history
 git log
+
+################################################################################
+########################### ADDING SUPERSET COMMAND  ###########################
+################################################################################   
+# Get Superset 
+git clone https://github.com/apache/superset
+
+# Start the latest official release of Superset
+# Enter the repository you just cloned
+$ cd superset
+
+# Set the repo to the state associated with the latest official version
+$ git checkout tags/6.0.0
+
+# Fire up Superset using Docker Compose
+$ docker compose -f docker-compose-image-tag.yml up
+
+# Log into Superset 
+username: admin
+password: admin

@@ -227,31 +227,6 @@ CREATE TABLE silver.erp_px_cat_g1v2
 GO
 
 /*============================================================================
-Foreign Key Constraints
-============================================================================*/
-
--- CRM Sales -> CRM Customers
-ALTER TABLE silver.crm_sales_details
-ADD CONSTRAINT fk_sales_customer
-FOREIGN KEY (sls_cust_id)
-REFERENCES silver.crm_cust_info(cst_id);
-GO
-
--- CRM Sales -> CRM Products
-ALTER TABLE silver.crm_sales_details
-ADD CONSTRAINT fk_sales_product
-FOREIGN KEY (sls_prd_key)
-REFERENCES silver.crm_prd_info(prd_key);
-GO
-
--- CRM Products -> ERP Product Categories
-ALTER TABLE silver.crm_prd_info
-ADD CONSTRAINT fk_product_category
-FOREIGN KEY (cat_id)
-REFERENCES silver.erp_px_cat_g1v2(id);
-GO
-
-/*============================================================================
 Indexes
 ============================================================================*/
 
