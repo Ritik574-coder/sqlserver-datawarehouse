@@ -10,6 +10,7 @@ segmentation, and reporting purposes.
 
 CREATE VIEW Gold.dim_customers AS 
 SELECT
+    ROW_NUMBER() OVER(ORDER BY cc.cst_id  ) customer_sk,
     cc.cst_id                 AS customer_id,
     cc.cst_key                AS customer_key,
     cc.cst_firstname          AS first_name,
@@ -31,7 +32,8 @@ INNER JOIN Silver.erp_loc_a101 cl
     ON cc.cst_key = cl.cid
 
 INNER JOIN Silver.erp_cust_az12 ci 
-    ON cc.cst_key = ci.cid;
+    ON cc.cst_key = ci.cid
+GO;
 
 /*=====================================================================================
 View Name: Gold.dim_products
@@ -45,6 +47,7 @@ analytics, and dimensional modeling purposes.
 
 CREATE VIEW Gold.dim_products AS 
 SELECT
+    ROW_NUMBER() OVER(ORDER BY prd_start_dt, prd_key) AS product_sk,
     cp.prd_id           AS product_id,
     cp.cat_id           AS category_id,
     cp.prd_key          AS product_key,
@@ -58,7 +61,8 @@ SELECT
     cp.prd_end_dt       AS product_end_date
 FROM Silver.crm_prd_info cp
 LEFT JOIN Silver.erp_px_cat_g1v2 ep
-    ON cp.cat_id = ep.id;
+    ON cp.cat_id = ep.id
+GO;
 
 /*=====================================================================================
 View Name: Gold.fact_sales
@@ -71,6 +75,7 @@ and unit price along with associated order, shipping, and due dates.
 
 CREATE VIEW Gold.fact_sales AS 
 SELECT 
+    ROW_NUMBER() OVER(ORDER BY sls_ord_num) slses_sk ,
     sls_ord_num      AS order_number,
     sls_prd_key      AS product_key,
     sls_cust_id      AS customer_id,
@@ -80,4 +85,6 @@ SELECT
     sls_sales        AS sales_amount,
     sls_quantity     AS quantity_sold,
     sls_price        AS unit_price
-FROM Silver.crm_sales_details;
+FROM Silver.crm_sales_details
+GO;
+
