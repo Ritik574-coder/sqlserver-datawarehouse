@@ -10,6 +10,7 @@ segmentation, and reporting purposes.
 
 CREATE VIEW Gold.dim_customers AS 
 SELECT
+    ROW_NUMBER() OVER(ORDER BY cc.cst_id  ) customer_sk,
     cc.cst_id                 AS customer_id,
     cc.cst_key                AS customer_key,
     cc.cst_firstname          AS first_name,
@@ -31,4 +32,5 @@ INNER JOIN Silver.erp_loc_a101 cl
     ON cc.cst_key = cl.cid
 
 INNER JOIN Silver.erp_cust_az12 ci 
-    ON cc.cst_key = ci.cid;
+    ON cc.cst_key = ci.cid
+GO;

@@ -102,10 +102,10 @@ ORDER BY duplicate_count DESC;
 
 -- Duplicate Customer Number Check
 SELECT 
-    customer_number,
+    customer_key,
     COUNT(*) AS duplicate_count
 FROM Gold.dim_customers
-GROUP BY customer_number
+GROUP BY customer_key
 HAVING COUNT(*) > 1
 ORDER BY duplicate_count DESC;
 
@@ -113,13 +113,13 @@ ORDER BY duplicate_count DESC;
 SELECT
     SUM(CASE WHEN customer_sk      IS NULL THEN 1 ELSE 0 END) AS customer_sk_null,
     SUM(CASE WHEN customer_id      IS NULL THEN 1 ELSE 0 END) AS customer_id_null,
-    SUM(CASE WHEN customer_number  IS NULL THEN 1 ELSE 0 END) AS customer_number_null,
+    SUM(CASE WHEN customer_key  IS NULL THEN 1 ELSE 0 END) AS customer_key_null,
     SUM(CASE WHEN first_name       IS NULL THEN 1 ELSE 0 END) AS first_name_null,
     SUM(CASE WHEN last_name        IS NULL THEN 1 ELSE 0 END) AS last_name_null,
     SUM(CASE WHEN country          IS NULL THEN 1 ELSE 0 END) AS country_null,
     SUM(CASE WHEN marital_status   IS NULL THEN 1 ELSE 0 END) AS marital_status_null,
     SUM(CASE WHEN gender           IS NULL THEN 1 ELSE 0 END) AS gender_null,
-    SUM(CASE WHEN created_date     IS NULL THEN 1 ELSE 0 END) AS created_date_null
+    SUM(CASE WHEN customer_create_date     IS NULL THEN 1 ELSE 0 END) AS created_date_null
 FROM Gold.dim_customers;
 
 -- Empty String Check
@@ -136,7 +136,7 @@ FROM Gold.dim_customers;
 
 SELECT *
 FROM Gold.dim_customers
-WHERE gender NOT IN ('Male', 'Female', 'M', 'F');
+WHERE gender NOT IN ('Male', 'Female', 'Unknown');
 
 -- Marital Status Validation
 SELECT DISTINCT marital_status
@@ -144,12 +144,12 @@ FROM Gold.dim_customers;
 
 SELECT *
 FROM Gold.dim_customers
-WHERE marital_status NOT IN ('Single', 'Married', 'S', 'M');
+WHERE marital_status NOT IN ('Single', 'Married');
 
 -- Future Date Validation
 SELECT *
 FROM Gold.dim_customers
-WHERE created_date > CURRENT_DATE;
+WHERE customer_create_date > GETDATE();
 
 -- Name Quality Check
 SELECT *
@@ -169,18 +169,6 @@ FROM Gold.fact_sales f
 LEFT JOIN Gold.dim_customers c
     ON f.customer_sk = c.customer_sk
 WHERE c.customer_sk IS NULL;
-
--- SCD Type-2 Overlap Check (Only if SCD columns exist)
--- Example: effective_date, end_date
-
-/*
-SELECT
-    customer_id,
-    effective_date,
-    end_date
-FROM Gold.dim_customers
-WHERE effective_date > end_date;
-*/
 
 -- Record Count Check
 SELECT COUNT(*) AS total_customer_records
@@ -222,9 +210,10 @@ SELECT
     SUM(CASE WHEN product_name       IS NULL THEN 1 ELSE 0 END) AS product_name_null,
     SUM(CASE WHEN product_line       IS NULL THEN 1 ELSE 0 END) AS product_line_null,
     SUM(CASE WHEN maintenance        IS NULL THEN 1 ELSE 0 END) AS maintenance_null,
-    SUM(CASE WHEN cost               IS NULL THEN 1 ELSE 0 END) AS cost_null,
+    SUM(CASE WHEN product_cost               IS NULL THEN 1 ELSE 0 END) AS cost_null,
     SUM(CASE WHEN product_start_date IS NULL THEN 1 ELSE 0 END) AS product_start_date_null
 FROM Gold.dim_products;
+
 
 -- Empty String Check
 SELECT *
@@ -239,7 +228,7 @@ WHERE
 SELECT *
 FROM Gold.dim_products
 WHERE
-    cost < 0;
+    product_cost < 0;
 
 -- Invalid Date Validation
 SELECT *
@@ -251,14 +240,8 @@ WHERE
 SELECT *
 FROM Gold.dim_products
 WHERE
-    product_start_date > CURRENT_DATE
-    OR product_end_date > CURRENT_DATE;
-
--- Product Name Quality Check
-SELECT *
-FROM Gold.dim_products
-WHERE
-    product_name LIKE '%[0-9]%';
+    product_start_date > GETDATE()
+    OR product_end_date > GETDATE();
 
 -- Category Standardization Check
 SELECT DISTINCT category
@@ -299,15 +282,14 @@ FROM Gold.dim_products;
 SELECT COUNT(DISTINCT product_id) AS unique_products
 FROM Gold.dim_products;
 
--- SCD Type-2 Validation (if applicable)
-/*
+-- SCD Type-2 Validation
 SELECT
     product_id,
     product_start_date,
     product_end_date
 FROM Gold.dim_products
 WHERE product_start_date > product_end_date;
-*/
+
 
 -- Granularity Check
 SELECT
