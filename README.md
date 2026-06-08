@@ -1,6 +1,6 @@
 # 🏛️ BusinessDW — Business Data Warehouse
 
-> A production-grade **SQL Server Data Warehouse** built using the **Medallion Architecture (Bronze → Silver → Gold)**, integrating multi-source enterprise data into analytics-ready dimensional models.
+> A  **SQL Server Data Warehouse** built using the **Medallion Architecture (Bronze → Silver → Gold)**, integrating multi-source data into analytics-ready dimensional models.
 
 ---
 
@@ -32,13 +32,102 @@ The project follows the **Medallion Architecture** — a layered data design pat
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Project Architecture
 
 ```
-┌──────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────────────┐
-│  Sources │────▶│    BRONZE    │────▶│    SILVER    │────▶│     GOLD     │────▶│    Consumers    │
-│ CRM / ERP│     │   Raw Data   │     │ Clean & Std  │     │Business-Ready│     │ BI / Analytics  │
-└──────────┘     └──────────────┘     └──────────────┘     └──────────────┘     └─────────────────┘
+sqlserver-datawarehouse/
+│
+├── DataSource/                         # Raw source datasets from CRM and ERP systems
+│   ├── CRM/
+│   │   ├── cust_info.csv              # Customer master data
+│   │   ├── prd_info.csv               # Product information
+│   │   └── sales_details.csv          # Sales transaction records
+│   │
+│   └── ERP/
+│       ├── CUST_AZ12.csv              # ERP customer reference data
+│       ├── LOC_A101.csv               # Customer location mapping
+│       └── PX_CAT_G1V2.csv            # Product category reference data
+│
+├── docker/
+│   └── requirements-local.txt         # Local development dependencies
+│
+├── Docs/                              # Architecture diagrams and project documentation
+│   ├── BusinessDW_Digram.png          # Business-oriented warehouse architecture
+│   ├── data_architecture.png          # End-to-end data architecture
+│   ├── Data_Flow.png                  # Data ingestion and transformation flow
+│   ├── data_layers.pdf                # Medallion architecture layer explanation
+│   ├── gold_data_model.gif            # Gold layer dimensional model
+│   └── relation_digram.gif            # Entity relationship diagram
+│
+├── LICENSE
+├── README.md
+│
+├── Script/
+│   │
+│   ├── Analysis/                      # Data analysis and reporting queries
+│   │   ├── dashboard_query/
+│   │   │   └── dashboard_query.sql    # Dashboard and KPI queries
+│   │   │
+│   │   ├── data_analysis/
+│   │   │   └── qulity_check.sql       # Data quality validation queries
+│   │   │
+│   │   ├── data_analysis.ipynb        # Exploratory data analysis notebook
+│   │   └── report/                    # Reporting scripts and outputs
+│   │
+│   ├── Bronze/                        # Raw ingestion layer
+│   │   ├── ddl_bronze.sql             # Bronze schema/table definitions
+│   │   └── proc_bronze.sql            # Bronze ingestion stored procedures
+│   │
+│   ├── Silver/                        # Cleansed and transformed data layer
+│   │   │
+│   │   ├── transform/
+│   │   │   ├── ddl_silver.sql         # Silver layer schema definitions
+│   │   │   ├── dirgram.puml           # Silver layer transformation diagram
+│   │   │   └── proc_load_silver.sql   # Silver ETL procedures
+│   │   │
+│   │   └── transformation/
+│   │       ├── crm_transformation/    # CRM data transformation logic
+│   │       │
+│   │       │   ├── customers/
+│   │       │   │   ├── cust_info.md
+│   │       │   │   └── cust_info.sql
+│   │       │   │
+│   │       │   ├── products/
+│   │       │   │   ├── prd_info.md
+│   │       │   │   └── prd_info.sql
+│   │       │   │
+│   │       │   └── sales/
+│   │       │       ├── sales_details.md
+│   │       │       └── sales_details.sql
+│   │       │
+│   │       └── erp_transformation/    # ERP data transformation logic
+│   │           ├── customers/
+│   │           │   ├── erp_cust_az12.md
+│   │           │   └── erp_cust_az12.sql
+│   │           │
+│   │           ├── locetion/
+│   │           │   ├── erp_loc_a101.md
+│   │           │   └── erp_loc_a101.sql
+│   │           │
+│   │           └── product/
+│   │               ├── px_cat_g1v2.md
+│   │               └── px_cat_g1v2.sql
+│   │
+│   ├── Gold/                          # Business-ready analytical layer
+│   │   ├── data_modle.puml            # Gold dimensional model design
+│   │   ├── ddl_gold.sql               # Gold schema/view definitions
+│   │   │
+│   │   └── model/
+│   │       ├── dim_customers.sql      # Customer dimension
+│   │       ├── dim_products.sql       # Product dimension
+│   │       └── fact_sales.sql         # Sales fact table
+│   │
+│   └── init_database.sql              # Database initialization script
+│
+├── SECURITY.md
+├── setup_command.sh                   # Local project setup commands
+│
+└── superset/                          # Apache Superset dashboards and BI integration
 ```
 ---
 ## Visual_architeture
