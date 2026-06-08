@@ -211,7 +211,7 @@ git add .
 git commit -m "Implement bronze layer ETL process"
 
 # commit with co-author
-git commit -m "sales table data cleaning and validation and transformation 
+git commit -m "adding script for dashboarding and analysis all data 
 
 Co-authored-by: ritsky-project <ritsky598@gmail.com>"
 

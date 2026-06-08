@@ -10,6 +10,7 @@ analytics, and dimensional modeling purposes.
 
 CREATE VIEW Gold.dim_products AS 
 SELECT
+    ROW_NUMBER() OVER(ORDER BY prd_start_dt, prd_key) AS product_sk,
     cp.prd_id           AS product_id,
     cp.cat_id           AS category_id,
     cp.prd_key          AS product_key,
@@ -23,4 +24,5 @@ SELECT
     cp.prd_end_dt       AS product_end_date
 FROM Silver.crm_prd_info cp
 LEFT JOIN Silver.erp_px_cat_g1v2 ep
-    ON cp.cat_id = ep.id;
+    ON cp.cat_id = ep.id
+GO;
