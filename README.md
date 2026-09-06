@@ -1,4 +1,4 @@
-# 🏛️ BusinessDW — Business Data Warehouse
+# 🏛️ BusinessDW — Business Data Warehouse 
 
 > A  **SQL Server Data Warehouse** built using the **Medallion Architecture (Bronze → Silver → Gold)**, integrating multi-source data into analytics-ready dimensional models.
 
